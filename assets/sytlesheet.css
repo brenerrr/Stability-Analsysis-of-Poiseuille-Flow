@@ -1,0 +1,15 @@
+#main-container{
+    height:100vh;
+}
+
+#plots-container{
+    height:100%
+}
+
+.btn-config, .btn-config:hover, .btn-config:focus, .btn-config:active{
+    background-color: white !important;
+    color: black !important;
+    border-color: white !important;
+
+}
+
