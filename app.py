@@ -441,7 +441,7 @@ def update_resolvent_norm_plot(data):
     return patch
 
 
-@app.callback(
+@callback(
     Output("modal-contour", "is_open"),
     Output("modal-growth", "is_open"),
     Output("modal-resolvent", "is_open"),
@@ -457,6 +457,49 @@ def toggle_modal(n_clicks, n_clicks1, nclicks_2):
         "button-config_resolvent": [False, False, True],
     }
     return out[ctx.triggered_id]
+
+
+@callback(
+    Output("button-spectrum", "children"),
+    Output("button-resolvent_contour", "children"),
+    Output("button-growth", "children"),
+    Output("button-resolvent", "children"),
+    Input("button-spectrum", "disabled"),
+    State("button-spectrum", "children"),
+    Input("button-resolvent_contour", "disabled"),
+    State("button-resolvent_contour", "children"),
+    Input("button-growth", "disabled"),
+    State("button-growth", "children"),
+    Input("button-resolvent", "disabled"),
+    State("button-resolvent", "children"),
+    prevent_initial_call=True,
+)
+def update_button(
+    spec_disabled,
+    spec,
+    contour_disabled,
+    contour,
+    growth_disabled,
+    growth,
+    resolvent_disabled,
+    resolvent,
+):
+    selector = {
+        "button-spectrum": (spec, spec_disabled, 0),
+        "button-resolvent_contour": (contour, contour_disabled, 1),
+        "button-growth": (growth, growth_disabled, 2),
+        "button-resolvent": (resolvent, resolvent_disabled, 3),
+    }
+    button, is_disabled, i = selector[ctx.triggered_id]
+
+    out = [no_update for _ in range(4)]
+
+    if is_disabled:
+        out[i] = [dbc.Spinner(size="sm"), " "] + button
+    else:
+        out[i] = button[1:]
+
+    return out
 
 
 if __name__ == "__main__":

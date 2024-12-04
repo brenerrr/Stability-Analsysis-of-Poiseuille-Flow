@@ -124,12 +124,12 @@ plots = html.Div(
                     className="container card-body d-flex flex-row",
                     children=[
                         dbc.Button(
-                            "Spectrum",
+                            ["Spectrum"],
                             id="button-spectrum",
                             className="align-self-start me-2",
                         ),
                         dbc.Button(
-                            "Resolvent Contours",
+                            ["Resolvent Contours"],
                             id="button-resolvent_contour",
                             className="align-self-start me-2",
                         ),
@@ -169,7 +169,7 @@ plots = html.Div(
                                     className="container d-flex flex-row",
                                     children=[
                                         dbc.Button(
-                                            "Transient",
+                                            ["Transient Growth"],
                                             id="button-growth",
                                             className="align-self-start me-2",
                                         ),
@@ -203,7 +203,7 @@ plots = html.Div(
                                     className="container d-flex flex-row",
                                     children=[
                                         dbc.Button(
-                                            "Resolvent Norm",
+                                            ["Resolvent Norm"],
                                             id="button-resolvent",
                                             className="align-self-start me-2",
                                         ),
