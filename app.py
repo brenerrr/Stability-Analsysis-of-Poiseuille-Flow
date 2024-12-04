@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objects as go
 from app_layout import *
+import methods as m
 
 # **************************** Default parameters ****************************
 h = 2
@@ -112,8 +113,6 @@ def update_beta(n):
     prevent_initial_call=True,
 )
 def solve_orr_sommerfeld(alpha, beta, re, n, clicks):
-    from methods import solve_orr_sommerfeld, build_diff_operator
-
     print("Solving Orr Somerfeld")
 
     y = np.linspace(-h / 2, h / 2, n, endpoint=True)
@@ -127,16 +126,16 @@ def solve_orr_sommerfeld(alpha, beta, re, n, clicks):
     Uy = Uy_func(y)
     Uyy = Uyy_func(y)
 
-    Dyy = build_diff_operator(scaled_coeffs_yy, n)
-    Dyyyy = build_diff_operator(scaled_coeffs_yyyy, n)
-    Dy = build_diff_operator(scaled_coeffs_y, n)
+    Dyy = m.build_diff_operator(scaled_coeffs_yy, n)
+    Dyyyy = m.build_diff_operator(scaled_coeffs_yyyy, n)
+    Dy = m.build_diff_operator(scaled_coeffs_y, n)
 
     # Use biased scheme at boundaries
     Dy[0, [0, 1, 2]] = -3 / 2, 2, -1 / 2
     Dy[n - 1, [n - 1, n - 2, n - 3]] = 3 / 2, -2, 1 / 2
     Dy[[0, n - 1], :] /= dy
 
-    omega, e_val, e_vec, L1 = solve_orr_sommerfeld(
+    omega, e_val, e_vec, L1 = m.solve_orr_sommerfeld(
         alpha,
         beta,
         re,
@@ -303,7 +302,7 @@ def update_vec_plot(hover, e_vec, n):
     running=[(Output("button-growth", "disabled"), True, False)],
     prevent_initial_call=True,
 )
-def calcualte_transient_growth(
+def calculate_transient_growth(
     n_clicks, e_val, e_vec, alpha, beta, n, t0, tN, tNPoints
 ):
     if len(e_val) == 0:
@@ -317,13 +316,11 @@ def calcualte_transient_growth(
     beta = float(beta)
     n = int(n)
 
-    from methods import calculate_transient_growth
-
     y = np.linspace(-h / 2, h / 2, n, endpoint=True)
     dy = y[1] - y[0]
     scaled_coeffs_yy = [np.array(coeffs) / dy**2 for coeffs in coeffs_yy]
     t = np.linspace(t0, tN, tNPoints)
-    G = calculate_transient_growth(alpha, beta, n, e_vec, e_val, scaled_coeffs_yy, t)
+    G = m.calculate_transient_growth(alpha, beta, n, e_vec, e_val, scaled_coeffs_yy, t)
     print("Finished calculating transient growth")
 
     return (G, t)
@@ -412,7 +409,7 @@ def calculate_resolvent(n_clicks, e_val, e_vec, alpha, beta, n, freqs_real, freq
     y = np.linspace(-h / 2, h / 2, n, endpoint=True)
     dy = y[1] - y[0]
     scaled_coeffs_yy = [np.array(coeffs) / dy**2 for coeffs in coeffs_yy]
-    R = calculate_resolvent(
+    R = m.calculate_resolvent(
         alpha,
         beta,
         n,
@@ -459,10 +456,10 @@ def toggle_modal(n_clicks, n_clicks1, nclicks_2):
 
 
 @app.callback(
-    Output("button-spectrum", "children"),
-    Output("button-resolvent_contour", "children"),
-    Output("button-growth", "children"),
-    Output("button-resolvent", "children"),
+    Output("button-spectrum", "children", allow_duplicate=True),
+    Output("button-resolvent_contour", "children", allow_duplicate=True),
+    Output("button-growth", "children", allow_duplicate=True),
+    Output("button-resolvent", "children", allow_duplicate=True),
     Input("button-spectrum", "disabled"),
     State("button-spectrum", "children"),
     Input("button-resolvent_contour", "disabled"),
