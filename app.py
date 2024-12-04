@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, callback, Output, Input, State, Patch, no_update, ctx
+from dash import Dash, html, dcc, Output, Input, State, Patch, no_update, ctx
 import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objects as go
@@ -64,7 +64,7 @@ app.layout = [
 
 
 # Update alpha
-@callback(
+@app.callback(
     Output("data-alpha", "data"),
     Input("input-alpha", "value"),
     prevent_initial_call=False,
@@ -74,7 +74,7 @@ def update_alpha(alpha):
 
 
 # Update beta
-@callback(
+@app.callback(
     Output("data-beta", "data"),
     Input("input-beta", "value"),
     prevent_initial_call=False,
@@ -84,7 +84,7 @@ def update_beta(beta):
 
 
 # Update re
-@callback(
+@app.callback(
     Output("data-re", "data"), Input("input-re", "value"), prevent_initial_call=False
 )
 def update_beta(re):
@@ -92,7 +92,7 @@ def update_beta(re):
 
 
 # Update n
-@callback(
+@app.callback(
     Output("data-n", "data"), Input("input-n", "value"), prevent_initial_call=False
 )
 def update_beta(n):
@@ -100,7 +100,7 @@ def update_beta(n):
 
 
 # Solve Orr Sommerfeld
-@callback(
+@app.callback(
     Output("data-e_val", "data"),
     Output("data-e_vec", "data"),
     State("data-alpha", "data"),
@@ -170,7 +170,7 @@ def solve_orr_sommerfeld(alpha, beta, re, n, clicks):
 
 
 # Update spectrum plot
-@callback(
+@app.callback(
     Output("fig-spectrum", "figure"),
     Input("data-e_val", "data"),
     Input("data-resolvent_contour", "data"),
@@ -210,7 +210,7 @@ def update_spectrum_plot(e_val, resolvent_contour):
         return patch
 
 
-@callback(
+@app.callback(
     Output("fig-vec", "figure"),
     Input("fig-spectrum", "hoverData"),
     State("data-e_vec", "data"),
@@ -289,7 +289,7 @@ def update_vec_plot(hover, e_vec, n):
     return patch
 
 
-@callback(
+@app.callback(
     Output("data-growth", "data"),
     Input("button-growth", "n_clicks"),
     State("data-e_val", "data"),
@@ -329,7 +329,7 @@ def calcualte_transient_growth(
     return (G, t)
 
 
-@callback(
+@app.callback(
     Output("fig-growth", "figure"),
     Input("data-growth", "data"),
     prevent_initial_call=True,
@@ -343,7 +343,7 @@ def update_growth_plot(data):
     return patch
 
 
-@callback(
+@app.callback(
     Output("data-resolvent", "data"),
     Input("button-resolvent", "n_clicks"),
     State("data-e_val", "data"),
@@ -367,7 +367,7 @@ def calculate_resolvent_norm(
     return (R, freqs)
 
 
-@callback(
+@app.callback(
     Output("data-resolvent_contour", "data"),
     Input("button-resolvent_contour", "n_clicks"),
     State("data-e_val", "data"),
@@ -392,7 +392,6 @@ def calculate_resolvent_contour(
     print("Calculating resolvent contours")
     freqs_r = np.linspace(or0, orN, orNpoints)
     freqs_i = np.linspace(oi0, oiN, oiNpoints)
-    print(oi0)
     R = calculate_resolvent(n_clicks, e_val, e_vec, alpha, beta, n, freqs_r, freqs_i)
     print("Finished calculating resolvent contours")
     return (R, (freqs_r, freqs_i))
@@ -427,7 +426,7 @@ def calculate_resolvent(n_clicks, e_val, e_vec, alpha, beta, n, freqs_real, freq
     return R
 
 
-@callback(
+@app.callback(
     Output("fig-resolvent", "figure"),
     Input("data-resolvent", "data"),
     prevent_initial_call=True,
@@ -441,7 +440,7 @@ def update_resolvent_norm_plot(data):
     return patch
 
 
-@callback(
+@app.callback(
     Output("modal-contour", "is_open"),
     Output("modal-growth", "is_open"),
     Output("modal-resolvent", "is_open"),
@@ -459,7 +458,7 @@ def toggle_modal(n_clicks, n_clicks1, nclicks_2):
     return out[ctx.triggered_id]
 
 
-@callback(
+@app.callback(
     Output("button-spectrum", "children"),
     Output("button-resolvent_contour", "children"),
     Output("button-growth", "children"),
